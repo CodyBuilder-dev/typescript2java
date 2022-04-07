@@ -1,0 +1,26 @@
+{
+  "name": "typescript2java",
+  "version": "1.0.0",
+  "description": "",
+  "bin": {
+    "transpile": "dist/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^9.1.0",
+    "typescript-parser": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "jest": "^27.5.1",
+    "ts-morph": "^14.0.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}

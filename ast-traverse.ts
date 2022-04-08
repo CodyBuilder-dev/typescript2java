@@ -11,69 +11,96 @@ const traverse = (source: SourceFile,sb: string): string => {
 }
 
 
-const statementParser = (statement: any, sb: string) => {
+const statementParser = (statement: any, sb: string): string => {
     if (!statement) return sb;
 
     switch(statement.kind) {
         case SyntaxKind.ImportDeclaration:
             return sb;
+
         case SyntaxKind.ClassDeclaration:
             sb += classDeclarationHandler(statement, sb)
             return sb;
+
         case SyntaxKind.InterfaceDeclaration:
             sb += interfaceDeclarationHandler(statement,sb);
             return sb;
+
         case SyntaxKind.MethodSignature:
             sb = methodSignatureHandler(statement, sb);
             return sb;
+
         case SyntaxKind.Decorator:
             sb += statement.getText();
             sb += '\n';
             return sb;
+
         case SyntaxKind.ExportKeyword:
             sb += 'public '
             return sb;
+
         case SyntaxKind.PrivateKeyword:
             sb += 'private '
             return sb;
+
         case SyntaxKind.ReadonlyKeyword:
             sb += 'final '
             return sb;
+
         case SyntaxKind.StaticKeyword:
             sb += 'static '
             return sb;
+
         case SyntaxKind.PropertyDeclaration:
             sb = propertyDeclarationHandler(statement, sb);
             sb += ';'
             return sb;
+
         case SyntaxKind.Constructor:
             sb = constructorHandler(statement, sb);
             return sb;
+
         case SyntaxKind.GetAccessor:
         case SyntaxKind.MethodDeclaration:
             sb = methodDeclarationHandler(statement, sb);
             return sb;
+
         case SyntaxKind.Parameter:
             sb = parameterHandler(statement,sb)
             return sb;
+
         case SyntaxKind.VariableStatement:
             sb = variableStatementHandler(statement, sb);
             return sb;
+
         case SyntaxKind.IfStatement:
-        case SyntaxKind.TryStatement:
-        case SyntaxKind.WhileStatement:
-            sb += statement.getText() + '\n';
+            sb = ifStatementHandler(statement, sb);
             return sb;
+
+        case SyntaxKind.WhileStatement:
+            sb = whileStatementHandler(statement, sb);
+            return sb;
+
+        case SyntaxKind.TryStatement:
+            sb = tryStatementHandler(statement, sb);
+            return sb;
+
         case SyntaxKind.ExpressionStatement:
             sb += statement.getText() + '\n';
             return sb;
+
         case SyntaxKind.Block:
             sb = blockHandler(statement, sb);
             return sb;
+
         case SyntaxKind.BinaryExpression:
+            sb = binaryExpressionHandler(statement,sb);
+            return sb;
+
         case SyntaxKind.CallExpression:
             sb += statement.getText();
             return sb;
+
         default:
             return sb;
     }
@@ -167,6 +194,7 @@ const methodDeclarationHandler = (methodDeclaration: any, sb: string) => {
 
     return sb;
 }
+
 const methodSignatureHandler = (methodSignature: any, sb: string) => {
     sb += methodSignature.name.escapedText + '(';
     if (methodSignature.parameters.length) {
@@ -179,6 +207,7 @@ const methodSignatureHandler = (methodSignature: any, sb: string) => {
     sb += '); \n';
     return sb;
 }
+
 const propertyDeclarationHandler = (propertyDeclaration: any, sb: string) => {
     if (propertyDeclaration.decorators) {
         for (const decorator of propertyDeclaration.decorators)
@@ -196,7 +225,6 @@ const propertyDeclarationHandler = (propertyDeclaration: any, sb: string) => {
 
     return sb;
 }
-
 
 const parameterHandler = (parameter: any, sb: string) => {
     if (parameter.decorators) {
@@ -268,10 +296,74 @@ const variableStatementHandler = (variableStatement: any, sb: string): string =>
     return sb
 }
 
+export const ifStatementHandler = (ifStatement: any, sb: string): string => {
+    // condition
+    sb += 'if ('
+    sb = statementParser(ifStatement.expression,sb)
+    sb += ')\n'
+    // then block
+    sb = statementParser(ifStatement.thenStatement,sb)
+
+    // else block
+    sb += 'else';
+    sb = statementParser(ifStatement.elseStatment,sb)
+    return sb;
+}
+
+const whileStatementHandler = (whileStatement: any, sb: string): string => {
+    // condition
+
+    // block
+    return sb;
+}
+
+const tryStatementHandler = (tryStatement: any, sb: string): string => {
+    // try
+
+    // catch
+    return sb;
+}
+
+const binaryExpressionHandler = (binaryExpression: any, sb: string): string => {
+    // left binary expression
+    if (binaryExpression.left.kind == SyntaxKind.BinaryExpression) {
+        sb = statementParser(binaryExpression.left,sb)
+    } else {
+        sb += binaryExpression.left.getText()
+    }
+    sb += ' '
+
+    // operator
+    sb += tokenHandler(binaryExpression.operatorToken)
+    sb += ' '
+
+    // right binary expression
+    if (binaryExpression.right.kind == SyntaxKind.BinaryExpression) {
+        sb = statementParser(binaryExpression.right,sb)
+    } else {
+        sb += binaryExpression.right.getText();
+    }
+    return sb;
+}
+
+const tokenHandler = (token: any): string => {
+    switch(token.kind) {
+        case SyntaxKind.EqualsEqualsEqualsToken :
+            return 'hashCode()'
+        case SyntaxKind.ExclamationEqualsEqualsToken:
+            return '!hashCode()'
+        default:
+            token.getText();
+    }
+}
 
 // ======================main entrypoint=======================
+const groupName = 'org.demo';
+const projectRoot = 'sample';
+
 const project = new Project();
-project.addSourceFilesAtPaths("sample/**/*.ts");
+project.addSourceFilesAtPaths(projectRoot + "/**/*.ts");
+
 
 const sourceFiles = project.getSourceFiles();
 for (const sourceFile of sourceFiles) {

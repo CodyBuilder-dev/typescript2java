@@ -2,13 +2,16 @@ export const createIndent = (level: number) => {
     return ' '.repeat(level*2)
 }
 
-export const extractFileName = (path: string) => {
+export const separateDirPathAndFileName = (path: string) => {
     // find last .ts
     const regex = /[A-z0-9.-]*.ts$/
     const result = path.match(regex)
 
     if (result)
-        return result[0];
+        return {
+            dirPath: path.slice(0,result["index"]),
+            fileName: result[0]
+        };
     else
         throw new Error('not a typescript file')
 }

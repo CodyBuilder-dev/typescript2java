@@ -1,5 +1,6 @@
 import {Project, SourceFile, SyntaxKind } from "ts-morph";
 import * as fs from 'fs';
+import {kebab2pascal, separateDirPathAndFileName} from "./utils";
 
 const traverse = (source: SourceFile,sb: string): string => {
     console.log('=========' + source.compilerNode.fileName + '===============')
@@ -274,7 +275,9 @@ project.addSourceFilesAtPaths("sample/**/*.ts");
 
 const sourceFiles = project.getSourceFiles();
 for (const sourceFile of sourceFiles) {
-    let sb = '';
-    sb = traverse(sourceFile,sb);
-    fs.writeFileSync(sourceFile.compilerNode.fileName+'.java',sb)
+    const sb = traverse(sourceFile,'');
+    const dirPath = separateDirPathAndFileName(sourceFile.compilerNode.fileName).dirPath;
+    const fileName = separateDirPathAndFileName(sourceFile.compilerNode.fileName).fileName;
+
+    fs.writeFileSync(dirPath + kebab2pascal(fileName),sb)
 }

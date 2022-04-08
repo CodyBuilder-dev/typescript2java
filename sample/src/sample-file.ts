@@ -1,4 +1,4 @@
-export class Sample {
+export class SampleFile {
     private variable: string;
     private no: number;
 

@@ -16,6 +16,10 @@ export const separateDirPathAndFileName = (path: string) => {
         throw new Error('not a typescript file')
 }
 
+export const dirpath2package = (dirpath: string, groupName: string, projectRoot: string): string => {
+    return groupName;
+}
+
 const isLowerCase = (char: string | undefined): boolean => {
     if (char)
         return char == char.toLowerCase()

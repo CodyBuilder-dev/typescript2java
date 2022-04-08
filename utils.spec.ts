@@ -1,10 +1,13 @@
-import {extractFileName, kebab2pascal} from "./utils";
+import {separateDirPathAndFileName, kebab2pascal} from "./utils";
 
 describe('Utility Test', () =>{
-    describe('extractFileName', () => {
+    describe('separateDirPathAndFileName', () => {
         test('', () => {
-            expect(extractFileName('/typescript2java/sample/src/sample-file.ts')).toEqual('sample-file.ts')
-            expect(()=> extractFileName('/typescript2java/sample/src/sample-file.js')).toThrowError('not a typescript file')
+            expect(separateDirPathAndFileName('/typescript2java/sample/src/sample-file.ts')).toEqual({
+                'dirPath':'/typescript2java/sample/src/',
+                'fileName':'sample-file.ts'
+            })
+            expect(()=> separateDirPathAndFileName('/typescript2java/sample/src/sample-file.js')).toThrowError('not a typescript file')
         })
     })
 

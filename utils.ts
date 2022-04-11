@@ -2,7 +2,7 @@ export const createIndent = (level: number) => {
     return ' '.repeat(level*2)
 }
 
-export const separateDirPathAndFileName = (path: string) => {
+export const separateFileNameFromPath = (path: string) => {
     // find last .ts
     const regex = /[A-z0-9.-]*.ts$/
     const result = path.match(regex)
@@ -16,8 +16,21 @@ export const separateDirPathAndFileName = (path: string) => {
         throw new Error('not a typescript file')
 }
 
+export const separateRelativePathFromDirPath = (dirPath: string, projectRoot: string) => {
+    // Find first matching dir name from left
+    const result = dirPath.match(projectRoot);
+    if (result) {
+        return dirPath.slice(Number(result['index']) + result[0].length);
+    }
+    else
+        throw new Error('project root not matching')
+}
+
 export const dirpath2package = (dirpath: string, groupName: string, projectRoot: string): string => {
-    return groupName;
+    const relativePath = separateRelativePathFromDirPath(dirpath,projectRoot)
+    const relativeDirName = separateFileNameFromPath(relativePath).dirPath;
+
+    return groupName + relativeDirName.replace(/\//g,'.').replace(/[.]$/,'');
 }
 
 const isLowerCase = (char: string | undefined): boolean => {

@@ -1,6 +1,6 @@
 import {Project, SourceFile, SyntaxKind } from "ts-morph";
 import * as fs from 'fs';
-import {kebab2pascal, separateDirPathAndFileName} from "./utils";
+import {dirpath2package, kebab2pascal, separateFileNameFromPath} from "./utils";
 
 const traverse = (source: SourceFile,sb: string): string => {
     console.log('=========' + source.compilerNode.fileName + '===============')
@@ -19,13 +19,12 @@ const statementParser = (statement: any, sb: string): string => {
             return sb;
 
         case SyntaxKind.ClassDeclaration:
-            sb += classDeclarationHandler(statement, sb)
+            sb = classDeclarationHandler(statement, sb)
             return sb;
 
         case SyntaxKind.InterfaceDeclaration:
-            sb += interfaceDeclarationHandler(statement,sb);
+            sb = interfaceDeclarationHandler(statement,sb);
             return sb;
-
         case SyntaxKind.MethodSignature:
             sb = methodSignatureHandler(statement, sb);
             return sb;
@@ -60,6 +59,7 @@ const statementParser = (statement: any, sb: string): string => {
             sb = constructorHandler(statement, sb);
             return sb;
 
+        case SyntaxKind.FunctionDeclaration:
         case SyntaxKind.GetAccessor:
         case SyntaxKind.MethodDeclaration:
             sb = methodDeclarationHandler(statement, sb);
@@ -71,6 +71,7 @@ const statementParser = (statement: any, sb: string): string => {
 
         case SyntaxKind.VariableStatement:
             sb = variableStatementHandler(statement, sb);
+            sb += '\n';
             return sb;
 
         case SyntaxKind.IfStatement:
@@ -160,9 +161,9 @@ const constructorHandler = (constructor: any, sb: string) => {
     if (constructor.parameters.length) {
         for (const parameter of constructor.parameters) {
             sb = statementParser(parameter,sb)
-            sb += ',\n'
+            sb += ','
         }
-        sb = sb.slice(0, -2);
+        sb = sb.slice(0, -1);
     }
     sb += ') \n';
     // 그냥 body 통으로 반환하기
@@ -180,9 +181,9 @@ const methodDeclarationHandler = (methodDeclaration: any, sb: string) => {
     if (methodDeclaration.parameters.length) {
         for (const parameter of methodDeclaration.parameters) {
             sb = statementParser(parameter,sb)
-            sb += ',\n'
+            sb += ','
         }
-        sb = sb.slice(0,-2)
+        sb = sb.slice(0,-1)
     }
     sb += ') \n';
 
@@ -200,9 +201,9 @@ const methodSignatureHandler = (methodSignature: any, sb: string) => {
     if (methodSignature.parameters.length) {
         for (const parameter of methodSignature.parameters) {
             sb = statementParser(parameter,sb)
-            sb += ',\n'
+            sb += ','
         }
-        sb = sb.slice(0,-2)
+        sb = sb.slice(0,-1)
     }
     sb += '); \n';
     return sb;
@@ -290,9 +291,7 @@ const blockHandler = (block: any, sb: string): string => {
 }
 
 const variableStatementHandler = (variableStatement: any, sb: string): string => {
-    for (const variableDeclation of variableStatement.declarationList.declarations) {
-        sb += paramTypeTranslator(variableDeclation) + ' ' + variableDeclation.name.getText() + '\n';
-    }
+    sb += variableStatement.getText();
     return sb
 }
 
@@ -349,11 +348,11 @@ const binaryExpressionHandler = (binaryExpression: any, sb: string): string => {
 const tokenHandler = (token: any): string => {
     switch(token.kind) {
         case SyntaxKind.EqualsEqualsEqualsToken :
-            return 'hashCode()'
+            return token.getText()
         case SyntaxKind.ExclamationEqualsEqualsToken:
-            return '!hashCode()'
+            return token.getText()
         default:
-            token.getText();
+            return token.getText();
     }
 }
 
@@ -367,9 +366,11 @@ project.addSourceFilesAtPaths(projectRoot + "/**/*.ts");
 
 const sourceFiles = project.getSourceFiles();
 for (const sourceFile of sourceFiles) {
-    const sb = traverse(sourceFile,'');
-    const dirPath = separateDirPathAndFileName(sourceFile.compilerNode.fileName).dirPath;
-    const fileName = separateDirPathAndFileName(sourceFile.compilerNode.fileName).fileName;
+    const dirPath = separateFileNameFromPath(sourceFile.compilerNode.fileName).dirPath;
+    const fileName = separateFileNameFromPath(sourceFile.compilerNode.fileName).fileName;
+
+    let sb = 'package ' + dirpath2package(sourceFile.compilerNode.fileName, groupName, projectRoot) + ';\n\n';
+    sb = traverse(sourceFile,sb);
 
     fs.writeFileSync(dirPath + kebab2pascal(fileName),sb)
 }

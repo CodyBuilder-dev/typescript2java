@@ -18,7 +18,8 @@ sampleFunc2(int a,SomeClass b,'Y' | 'N' c)
     }
 }
 class SomeClass {
-SomeClass(private String some) 
+private String some
+SomeClass(String some) 
 {}
 
 }
@@ -30,7 +31,10 @@ do2();
 class ImplClass implements SomeInterface {
 private  int _var1;
 private  SomeClass _instance1;
-ImplClass(int var1,SomeClass var2) 
+int var1
+SomeClass var2
+private String var3
+ImplClass(int var1,SomeClass var2,String var3) 
 {
         this._var1 =var1;
         this._instance1 = var2;
@@ -64,6 +68,8 @@ do2()
 public class SampleFile {
 private  String variable;
 private  int no;
+String variable
+int no
 SampleFile(String variable,int no) 
 {
         this.variable = variable;

@@ -41,7 +41,7 @@ class ImplClass implements SomeInterface{
     private _var1: number;
     private _instance1: SomeClass;
 
-    constructor(var1: number, var2: SomeClass){
+    constructor(var1: number, var2: SomeClass, private var3: string){
         this._var1 =var1;
         this._instance1 = var2;
     }

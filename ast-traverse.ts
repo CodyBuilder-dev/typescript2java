@@ -157,6 +157,20 @@ const classDeclarationHandler = (classDeclaration: any, sb: string) => {
 
 
 const constructorHandler = (constructor: any, sb: string) => {
+    if (constructor.parameters.length) {
+        for (const parameter of constructor.parameters) {
+            if (parameter.decorators) {
+                for (const decorator of parameter.decorators)
+                    sb = statementParser(decorator,sb)
+            }
+            if (parameter.modifiers) {
+                for (const modifier of parameter.modifiers)
+                    sb = statementParser(modifier,sb)
+            }
+            sb += paramTypeTranslator(parameter) + ' ' +parameter.name.getText() + ';\n';
+        }
+    }
+
     sb += constructor.parent.name.escapedText +'('
     if (constructor.parameters.length) {
         for (const parameter of constructor.parameters) {
@@ -231,10 +245,6 @@ const parameterHandler = (parameter: any, sb: string) => {
     if (parameter.decorators) {
         for (const decorator of parameter.decorators)
             sb = statementParser(decorator,sb)
-    }
-    if (parameter.modifiers) {
-        for (const modifier of parameter.modifiers)
-            sb = statementParser(modifier,sb)
     }
     sb += paramTypeTranslator(parameter) + ' ' +parameter.name.getText();
     return sb

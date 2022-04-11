@@ -22,6 +22,7 @@ describe('Utility Test', () =>{
         test('', ()=>{
             expect(dirpath2package('/typescript2java/sample/source/sample-file.ts', 'org.demo','sample')).toEqual('org.demo.source')
             expect(dirpath2package('/typescript2java/sample/source/util/sample-file.ts', 'org.demo','sample')).toEqual('org.demo.source.util')
+            expect(dirpath2package('/typescript2java/sample/source/dir-with-hyphen/sample-file.ts','org.demo','sample')).toEqual('org.demo.source.dir_with_hyphen')
         })
     })
 

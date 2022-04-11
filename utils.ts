@@ -30,7 +30,7 @@ export const dirpath2package = (dirpath: string, groupName: string, projectRoot:
     const relativePath = separateRelativePathFromDirPath(dirpath,projectRoot)
     const relativeDirName = separateFileNameFromPath(relativePath).dirPath;
 
-    return groupName + relativeDirName.replace(/\//g,'.').replace(/[.]$/,'');
+    return groupName + relativeDirName.replace(/-/g,'_').replace(/\//g,'.').replace(/[.]$/,'');
 }
 
 const isLowerCase = (char: string | undefined): boolean => {

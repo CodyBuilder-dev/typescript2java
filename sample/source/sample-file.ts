@@ -32,6 +32,7 @@ class SomeClass {
 
 // Interface Declaration
 interface SomeInterface {
+    do1(var1: string);
     execute();
     do2():string;
 }
@@ -40,7 +41,7 @@ class ImplClass implements SomeInterface{
     private _var1: number;
     private _instance1: SomeClass;
 
-    constuctor(var1: number, var2: SomeClass){
+    constructor(var1: number, var2: SomeClass){
         this._var1 =var1;
         this._instance1 = var2;
     }

@@ -1,13 +1,20 @@
-import {separateDirPathAndFileName, kebab2pascal, dirpath2package} from "./utils";
+import {separateFileNameFromPath, kebab2pascal, dirpath2package, separateRelativePathFromDirPath} from "./utils";
 
 describe('Utility Test', () =>{
-    describe('separateDirPathAndFileName', () => {
+    describe('separateFileNameFromAbsPath', () => {
         test('', () => {
-            expect(separateDirPathAndFileName('/typescript2java/sample/src/sample-file.ts')).toEqual({
+            expect(separateFileNameFromPath('/typescript2java/sample/src/sample-file.ts')).toEqual({
                 'dirPath':'/typescript2java/sample/src/',
                 'fileName':'sample-file.ts'
             })
-            expect(()=> separateDirPathAndFileName('/typescript2java/sample/src/sample-file.js')).toThrowError('not a typescript file')
+            expect(()=> separateFileNameFromPath('/typescript2java/sample/src/sample-file.js')).toThrowError('not a typescript file')
+        })
+    })
+
+    describe('separateRelativePathFromDirPath', () => {
+        test('', () => {
+            expect(separateRelativePathFromDirPath('/typescript2java/sample/src/sample-file.ts', 'sample')).toEqual('/src/sample-file.ts')
+            expect(separateRelativePathFromDirPath('/typescript2java/sample/src/sample/sample-file.ts', 'sample')).toEqual('/src/sample/sample-file.ts')
         })
     })
 

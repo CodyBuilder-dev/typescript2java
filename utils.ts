@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export const createIndent = (level: number) => {
     return ' '.repeat(level*2)
 }
@@ -64,4 +67,8 @@ export const kebab2pascal = (filename: string) => {
     stack.pop()
 
     return stack.join('') + '.java';
+}
+
+export const writeFileWithMkdir = (filepath: string, sb: string) => {
+    fs.promises.mkdir(path.dirname(filepath), {recursive: true}).then(x => fs.promises.writeFile(filepath, sb))
 }

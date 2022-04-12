@@ -1,4 +1,11 @@
-import {separateFileNameFromPath, kebab2pascal, dirpath2package, separateRelativePathFromDirPath} from "./utils";
+import {
+    separateFileNameFromPath,
+    kebab2pascal,
+    dirpath2package,
+    separateRelativePathFromDirPath,
+    writeFileWithMkdir
+} from "./utils";
+import fs from "fs";
 
 describe('Utility Test', () =>{
     describe('separateFileNameFromAbsPath', () => {
@@ -39,6 +46,18 @@ describe('Utility Test', () =>{
             expect(kebab2pascal('FileNameLikeThis.ts')).toEqual('FileNameLikeThis.java')
             expect(kebab2pascal('File.Name.lIkeThis.ts')).toEqual('FileNameLIkeThis.java')
             expect(kebab2pascal('file-Name-Like-This.ts')).toEqual('FileNameLikeThis.java')
+        })
+    })
+
+    describe('writeFileWithMkdir', () => {
+        test('', () => {
+            // given
+            const filepath = 'never_existing_folder/never_existing_file.txt'
+            const sb = 'hello!'
+
+            // then
+            expect(() => fs.writeFileSync(filepath, sb)).toThrow();
+            expect(()=> writeFileWithMkdir(filepath, sb)).not.toThrow();
         })
     })
 })

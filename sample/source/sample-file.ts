@@ -25,6 +25,13 @@ function sampleFunc2 (a: number= 10,
     }
 }
 
+// Enum Declaration
+enum f {
+    A = "1",
+    B = 'test',
+    C = 3,
+}
+
 // Class Declaration
 class SomeClass {
     constructor(private some: string = `${process.env.NODE_ENV}-env`){}

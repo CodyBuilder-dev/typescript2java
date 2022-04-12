@@ -9,7 +9,6 @@ const traverse = (source: SourceFile,sb: string): string => {
     return sb;
 }
 
-
 const statementParser = (statement: any, sb: string): string => {
     if (!statement) return sb;
 
@@ -24,6 +23,15 @@ const statementParser = (statement: any, sb: string): string => {
         case SyntaxKind.InterfaceDeclaration:
             sb = interfaceDeclarationHandler(statement,sb);
             return sb;
+
+        case SyntaxKind.EnumDeclaration:
+            sb = enumDeclarationHandler(statement, sb);
+            return sb;
+
+        case SyntaxKind.EnumMember:
+            sb = enumMemberHandler(statement, sb);
+            return sb;
+
         case SyntaxKind.MethodSignature:
             sb = methodSignatureHandler(statement, sb);
             return sb;
@@ -154,6 +162,34 @@ const classDeclarationHandler = (classDeclaration: any, sb: string) => {
     return sb;
 }
 
+
+const enumDeclarationHandler = (enumDeclaraton: any, sb: string) => {
+    sb += 'enum ' + enumDeclaraton.name.escapedText + '{\n';
+    for(const member of enumDeclaraton.members) {
+        sb = statementParser(member, sb);
+    }
+
+    sb += '}\n'
+    return sb;
+}
+
+const enumMemberHandler = (enumMember: any, sb: string) => {
+    sb += enumMember.name.escapedText;
+    if (enumMember.initializer) {
+        sb += '(' + initializerTypeTranslator(enumMember.initializer)  + ')';
+    }
+    sb += '\n';
+    return sb;
+}
+
+const initializerTypeTranslator = (initializer: any) => {
+    switch(initializer.kind) {
+        case SyntaxKind.NumericLiteral:
+            return initializer.text;
+        case SyntaxKind.StringLiteral:
+            return '"' + initializer.text + '"';
+    }
+}
 
 const constructorHandler = (constructor: any, sb: string) => {
     if (constructor.parameters.length) {

@@ -1,6 +1,5 @@
 import {Project, SourceFile, SyntaxKind } from "ts-morph";
-import * as fs from 'fs';
-import {dirpath2package, kebab2pascal, separateFileNameFromPath} from "./utils";
+import {dirpath2package, kebab2pascal, separateFileNameFromPath, writeFileWithMkdir} from "./utils";
 
 const traverse = (source: SourceFile,sb: string): string => {
     console.log('=========' + source.compilerNode.fileName + '===============')
@@ -376,11 +375,10 @@ project.addSourceFilesAtPaths(projectRoot + "/**/*.ts");
 
 const sourceFiles = project.getSourceFiles();
 for (const sourceFile of sourceFiles) {
-    const dirPath = separateFileNameFromPath(sourceFile.compilerNode.fileName).dirPath;
-    const fileName = separateFileNameFromPath(sourceFile.compilerNode.fileName).fileName;
-
     let sb = 'package ' + dirpath2package(sourceFile.compilerNode.fileName, groupName, projectRoot) + ';\n\n';
     sb = traverse(sourceFile,sb);
 
-    fs.writeFileSync(dirPath + kebab2pascal(fileName),sb)
+    const dirPath = separateFileNameFromPath(sourceFile.compilerNode.fileName).dirPath;
+    const fileName = separateFileNameFromPath(sourceFile.compilerNode.fileName).fileName;
+    writeFileWithMkdir(dirPath.replace(/-/g,'_') + kebab2pascal(fileName),sb)
 }

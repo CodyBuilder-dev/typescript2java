@@ -10,6 +10,9 @@ const e = Number('10');
 
 // IF/While/Try Statements
 
+function promFunc(): Promise<string> {
+    return null;
+}
 
 // Function Declarations
 const sampleFunc = (name: string) => {

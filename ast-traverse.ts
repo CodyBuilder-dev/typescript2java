@@ -321,7 +321,7 @@ const paramTypeTranslator = (statement: any) => {
                 case SyntaxKind.AnyKeyword:
                     return '';
                 default:
-                    return statement.type.typeName.escapedText;
+                    return statement.type.getText();
             }
         }
     } else {
